@@ -2,6 +2,7 @@ import telebot
 import requests  # for work with HTTP
 import json
 from telebot import types
+import sys
 
 bot = telebot.TeleBot('7175628286:AAEDNBOaAayGrswbOYnemasT-1WujWSFGA4')
 API = 'ea9ba49e45d4950c4eab0069ac547572'
@@ -22,15 +23,21 @@ def get_weather(message):
     if message.text == '👋 Поздороваться':
         markup = types.ReplyKeyboardMarkup(resize_keyboard=True)
         btn1 = types.KeyboardButton('Температуа воздуха 🌡')
-        btn2 = types.KeyboardButton('Погодные условия 🌬')
-        btn3 = types.KeyboardButton('Вся информация 📚')
-        markup.row(btn1, btn2)
-        markup.row(btn3)
+        btn2 = types.KeyboardButton('Завершить работу')
+        markup.row(btn1)
+        markup.row(btn2)
         bot.send_message(message.from_user.id, 'Задайте интересующий вас вопрос ?', reply_markup=markup)
 
     elif message.text == 'Температуа воздуха 🌡':
         bot.send_message(message.from_user.id, "Напиши мне название города🏙️ в котором хочешь узнать погоду🌤️")
         user_state[message.from_user.id] = 'awaiting_city'
+
+    elif message.text == 'Завершить работу':
+        markup = types.ReplyKeyboardMarkup(resize_keyboard=True)
+        btn1 = types.KeyboardButton("👋 Поздороваться")
+        markup.add(btn1)
+        bot.send_message(message.from_user.id, "👋 Привет! Начнем с начала?", reply_markup=markup)
+        sys.exit(0)
 
     elif user_state[message.from_user.id] == 'awaiting_city':
         if user_state[message.from_user.id] == 'awaiting_city':
@@ -45,11 +52,10 @@ def get_weather(message):
             user_state[message.from_user.id] = None
 
         markup = types.ReplyKeyboardMarkup(resize_keyboard=True)
+        btn2 = types.KeyboardButton('Завершить работу')
         btn1 = types.KeyboardButton('Температуа воздуха 🌡')
-        btn2 = types.KeyboardButton('Погодные условия 🌬')
-        btn3 = types.KeyboardButton('Вся информация 📚')
-        markup.row(btn1, btn2)
-        markup.row(btn3)
+        markup.row(btn1)
+        markup.row(btn2)
         bot.send_message(message.from_user.id, 'Выберите интересующий вас вопрос:', reply_markup=markup)
 
         user_state[message.from_user.id] = None
@@ -58,6 +64,4 @@ def get_weather(message):
         bot.send_message(message.from_user.id, "Я не понял, попробуйте ещё раз.")
 
 
-
 bot.polling(non_stop=True)
-
